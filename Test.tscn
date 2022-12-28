@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=2]
+
+[sub_resource type="PlaneMesh" id=1]
+
+[sub_resource type="Shader" id=2]
+code = "shader_type spatial;
+render_mode unshaded;
+
+uniform vec4 tint : hint_color; // tint effect
+uniform float wave_speed = 3.0; // wave loop speed
+uniform float wave_freq = 10.0; // wave vertical freq
+uniform float wave_width = 1; // wave width 
+
+void fragment(){
+	vec2 scale_UV = SCREEN_UV;
+	vec2 wave_uv_offset;
+	wave_uv_offset.x = cos((TIME*wave_speed)+UV.x+UV.y*wave_freq*2.0)*wave_width*0.01;
+	ALBEDO = texture(SCREEN_TEXTURE, SCREEN_UV+wave_uv_offset).rgb*tint.rgb;
+}"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+shader_param/tint = Color( 0.376471, 0.678431, 0.694118, 1 )
+shader_param/wave_speed = 3.0
+shader_param/wave_freq = 10.0
+shader_param/wave_width = 1.0
+
+[node name="Spatial" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = SubResource( 1 )
+material/0 = SubResource( 3 )

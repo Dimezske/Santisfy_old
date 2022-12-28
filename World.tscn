@@ -1,0 +1,121 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/zylann.hterrain/hterrain_texture_set.gd" type="Script" id=2]
+[ext_resource path="res://addons/zylann.hterrain/hterrain.gd" type="Script" id=3]
+[ext_resource path="res://Terrain/TerrainTextures/Ground054/Ground054_2K_Color.png" type="Texture" id=4]
+[ext_resource path="res://Terrain/TerrainTextures/Gravel035/Gravel035_2K_Color.jpg" type="Texture" id=5]
+[ext_resource path="res://addons/data.hterrain" type="Resource" id=6]
+[ext_resource path="res://Terrain/TerrainTextures/Grass001/Grass001_2K_Color.jpg" type="Texture" id=7]
+[ext_resource path="res://Terrain/TerrainTextures/Ground054/Ground054_2K_NormalGL.png" type="Texture" id=8]
+[ext_resource path="res://Rock.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Terrain/TerrainTextures/Grass001/Grass001_2K_NormalGL.jpg" type="Texture" id=10]
+[ext_resource path="res://Terrain/TerrainTextures/Gravel035/Gravel035_2K_NormalDX.jpg" type="Texture" id=11]
+[ext_resource path="res://Water.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Test.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Environment/Trees/Birch Tree.tscn" type="PackedScene" id=14]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 2 )
+mode = 0
+textures = [ [ ExtResource( 7 ), ExtResource( 4 ), ExtResource( 5 ) ], [ ExtResource( 10 ), ExtResource( 8 ), ExtResource( 11 ) ] ]
+
+[sub_resource type="ProceduralSky" id=3]
+sky_top_color = Color( 0.427451, 0.443137, 0.231373, 1 )
+sky_horizon_color = Color( 0.741176, 0.764706, 0.345098, 1 )
+sky_curve = 0.199723
+ground_bottom_color = Color( 0.333333, 0.356863, 0.243137, 1 )
+ground_horizon_color = Color( 0.662745, 0.654902, 0.364706, 1 )
+ground_curve = 0.069644
+ground_energy = 0.85
+sun_color = Color( 1, 0.709804, 0.215686, 1 )
+
+[sub_resource type="Environment" id=2]
+background_mode = 2
+background_sky = SubResource( 3 )
+background_sky_custom_fov = 102.8
+background_color = Color( 0.760784, 0.756863, 0.301961, 1 )
+background_energy = 6.49
+ambient_light_color = Color( 0.219608, 0.223529, 0.196078, 1 )
+ambient_light_energy = 1.55
+ambient_light_sky_contribution = 0.61
+fog_color = Color( 0.854902, 0.815686, 0.560784, 0.533333 )
+fog_sun_color = Color( 0.839216, 0.827451, 0.168627, 0.352941 )
+fog_sun_amount = 1.0
+fog_height_min = -11.1
+fog_height_max = 5.0
+dof_blur_far_distance = 8192.0
+
+[node name="World" type="Spatial"]
+
+[node name="KinematicBody" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -56.0341, 49.1442, 223.658 )
+
+[node name="CSGBox" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.318786, 28.6689, -0.212724 )
+use_collision = true
+collision_layer = 15
+collision_mask = 15
+width = 17.6019
+depth = 16.6607
+
+[node name="Terrain" type="Spatial" parent="."]
+
+[node name="HTerrain" type="Spatial" parent="Terrain"]
+script = ExtResource( 3 )
+lod_scale = 5.0
+map_scale = Vector3( 2, 2, 2 )
+centered = true
+_terrain_data = ExtResource( 6 )
+chunk_size = 32
+collision_enabled = true
+collision_layer = 1
+collision_mask = 1
+shader_type = "Classic4Lite"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource( 1 )
+render_layers = 1
+shader_params/u_ground_uv_scale = 20
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = false
+shader_params/u_tile_reduction = Plane( 0, 0, 0, 0 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 2 )
+
+[node name="BakedLightmap" type="DirectionalLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65225, 71.9838, -23.1667 )
+light_color = Color( 0.913725, 0.980392, 0.580392, 1 )
+light_energy = 2.762
+light_specular = 1.674
+shadow_contact = 0.081
+
+[node name="Rock" parent="." instance=ExtResource( 9 )]
+transform = Transform( 2, 0, 0, 0, 1.99666, -0.115511, 0, 0.115511, 1.99666, 0.549133, 3.73188, 5.84367 )
+
+[node name="Water" parent="." instance=ExtResource( 12 )]
+transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, -97.0814, 14.3234, 346.385 )
+
+[node name="MeshInstance" parent="Water" index="0"]
+transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 20, 0.0481091, -7.62939e-06, 0.0246277 )
+
+[node name="Spatial" parent="Water" instance=ExtResource( 13 )]
+
+[node name="MeshInstance" parent="Water/Spatial" index="0"]
+transform = Transform( 20, 0, 0, 0, -1, 1.74846e-06, 0, -8.74228e-08, -20, 0, 0, 0 )
+
+[node name="Trees" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 21.1199, 115.094 )
+
+[node name="Birch Tree" parent="Trees" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -44.5061, 10.1795, 89.7521 )
+
+[node name="Birch Tree2" parent="Trees" instance=ExtResource( 14 )]
+transform = Transform( 1.2, 0, 0, 0, 2, 0, 0, 0, 1.2, -24.4889, 11.2466, 102.475 )
+
+[node name="Birch Tree3" parent="Trees" instance=ExtResource( 14 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -68.2937, 4.58677, 89.7521 )
+
+[editable path="Water"]
+[editable path="Water/Spatial"]
