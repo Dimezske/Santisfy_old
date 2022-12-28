@@ -1,3 +1,3 @@
 # Santisfy
 3D RPG
-Copyright 28/12/2022 
+Copyright Dimezske 2022, all rights reserved
