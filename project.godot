@@ -36,7 +36,7 @@ Water="*res://Water.tscn"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/zylann.hterrain/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/wojtekpil.biomes/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg" )
 
 [gui]
 

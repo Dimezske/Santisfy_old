@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/birch_material.obj-284da6b1f6731ef2e8bc5455fd49252c.mesh"
+
+[deps]
+
+files=[ "res://.import/birch_material.obj-284da6b1f6731ef2e8bc5455fd49252c.mesh" ]
+
+source_file="res://Models/birch_material.obj"
+dest_files=[ "res://.import/birch_material.obj-284da6b1f6731ef2e8bc5455fd49252c.mesh", "res://.import/birch_material.obj-284da6b1f6731ef2e8bc5455fd49252c.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286

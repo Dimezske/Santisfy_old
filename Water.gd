@@ -2,9 +2,6 @@ extends Spatial
 
 export onready var tint = get_node("../../KinematicBody/Camera/ColorRect")
 
-func _ready():
-	pass
-
 func _on_Area_body_entered(body):
 	print(body)
 	if body.is_in_group("Player"):
