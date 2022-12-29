@@ -28,44 +28,69 @@ onready var tint = $Camera/ColorRect
 func _ready():
 	tint.hide()
 func _physics_process(delta: float) -> void:
-	var move_direction := Vector3.ZERO
-	move_direction.x = Input.get_action_strength("right") - Input.get_action_strength("left")
-	move_direction.z = Input.get_action_strength("back") - Input.get_action_strength("forward")
-	move_direction = move_direction.rotated(Vector3.UP, _camera.rotation.y).normalized()
-	
 	if not Global.in_water:
+		var move_direction := Vector3.ZERO
+		move_direction.x = Input.get_action_strength("right") - Input.get_action_strength("left")
+		move_direction.z = Input.get_action_strength("back") - Input.get_action_strength("forward")
+		move_direction = move_direction.rotated(Vector3.UP, _camera.rotation.y).normalized()
+		
 		_velocity.x = move_direction.x * speed
 		_velocity.z = move_direction.z * speed
-		jump_strength = 20.0
 		_velocity.y -= gravity * delta
-	
-	var just_landed := is_on_floor() and _snap_vector == Vector3.ZERO
-	var is_jumping := is_on_floor() and Input.is_action_just_pressed("jump")
-	if is_jumping:
-		_velocity.y = jump_strength
-		_snap_vector = Vector3.ZERO
-	elif just_landed:
-		_snap_vector = Vector3.DOWN
-	_velocity = move_and_slide_with_snap(_velocity, _snap_vector, Vector3.UP, true)
-	
+#		_velocity += _camera.global_transform.basis.x * move_vector.x * delta
+#		_velocity += _camera.global_transform.basis.y * move_vector.y * delta
+#		_velocity += _camera.global_transform.basis.z * move_vector.z * delta
+		
+		var just_landed := is_on_floor() and _snap_vector == Vector3.ZERO
+		var is_jumping := is_on_floor() and Input.is_action_just_pressed("jump")
+		if is_jumping:
+			_velocity.y = jump_strength
+			_snap_vector = Vector3.ZERO
+		elif just_landed:
+			_snap_vector = Vector3.DOWN
+		_velocity = move_and_slide_with_snap(_velocity, _snap_vector, Vector3.UP, true)
 	if Global.in_water:
-		floating = self.global_transform.origin.y >= _water_plane.global_transform.origin.y
+		floating = self.global_transform.origin.y >= _water_plane.global_transform.origin.y - 0.25
 		#create a new move vector that's just the *unrotated* movement direction from keyboard
 		move_vector = Vector3(Input.get_action_strength("right") - Input.get_action_strength("left"), 0, Input.get_action_strength("back") - Input.get_action_strength("forward"))
-		moving = move_vector.length() > 0.2 #or some small number...
-		if floating:
-			_velocity.y += gravity * delta
-			move_direction = move_direction.rotated(Vector3.FORWARD, _camera.rotation.y)
-#			_velocity += move_direction * delta #because move_direction is already "rotated" for the camera
-		#we're under the surface, so move in the direction of the camera
-		elif moving:
-			move_vector = move_vector.normalized()
-			_velocity += _camera.global_transform.basis.x * move_vector.x * delta
-			_velocity += _camera.global_transform.basis.y * move_vector.y * delta
-			_velocity += _camera.global_transform.basis.z * move_vector.z * delta
-		#otherwise, just sink
+		move_vector = move_vector.normalized() * 1
+		_velocity += _camera.global_transform.basis.x * move_vector.x
+		_velocity += _camera.global_transform.basis.y * move_vector.y
+		_velocity += _camera.global_transform.basis.z * move_vector.z
+		_velocity += Vector3(0, Input.get_action_strength("jump") * 1, 0)
+		_velocity += Vector3(0, -0.5, 0)
+		_velocity += _camera.global_transform.basis.z * move_vector.z
+		if(floating):
+			if self.global_transform.origin.y < _water_plane.global_transform.origin.y - 0.25:
+				tint.hide()
+			var _jumping = _water_plane.global_transform.origin.y - 0.25 < self.global_transform.origin.y  and Input.is_action_just_pressed("jump")
+			if _jumping:
+				_velocity.y = jump_strength * 1.2
+				_snap_vector = Vector3.ZERO
+			_velocity += Vector3(0, 0.5, 0)
 		else:
-			_velocity += Vector3(0, -sink_speed, 0)
+			tint.show()
+			_velocity += Vector3(0, -0.5, 0)
+		_velocity = move_and_slide(_velocity, Vector3.UP, false)
+		_velocity = _velocity * 0.9
+#	if Global.in_water:
+#		floating = self.global_transform.origin.y >= _water_plane.global_transform.origin.y
+#		#create a new move vector that's just the *unrotated* movement direction from keyboard
+#		move_vector = Vector3(Input.get_action_strength("right") - Input.get_action_strength("left"), 0, Input.get_action_strength("back") - Input.get_action_strength("forward"))
+#		moving = move_vector.length() > 0.2 #or some small number...
+#		if floating:
+#			_velocity.y += gravity * delta
+#			move_direction = move_direction.rotated(Vector3.FORWARD, _camera.rotation.y)
+##			_velocity += move_direction * delta #because move_direction is already "rotated" for the camera
+#		#we're under the surface, so move in the direction of the camera
+#		elif moving:
+#			move_vector = move_vector.normalized()
+#			_velocity += _camera.global_transform.basis.x * move_vector.x * delta
+#			_velocity += _camera.global_transform.basis.y * move_vector.y * delta
+#			_velocity += _camera.global_transform.basis.z * move_vector.z * delta
+#		#otherwise, just sink
+#		else:
+#			_velocity += Vector3(0, -sink_speed, 0)
 #	if Global.in_water:
 #		jump_strength = 0
 #		if Input.get_action_strength("forward"):
@@ -96,4 +121,7 @@ func _physics_process(delta: float) -> void:
 #				if _camera.global_transform.origin.y < _water_space.global_transform.origin.y:
 #					floating = false
 #					_velocity.y -= gravity * delta
-#
+#var _jumping = _water_plane.global_transform.origin.y - 0.25 < self.global_transform.origin.y  and Input.is_action_just_pressed("jump")
+#			if _jumping:
+#				_velocity.y = jump_strength * 0.5
+#				_snap_vector = Vector3.ZERO
